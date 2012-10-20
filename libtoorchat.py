@@ -6,10 +6,11 @@ class ToorChatProtocol():
 		self.PACKET_END = "\xFF\xBE\xEF\xFF"
 		self.device = device
 
-	def send_message(cls, message = "", user = None):
+	def send_message(self, message = "", user = None):
 		''' This is used to send a simple message over the toorchat protocol '''
 		msg = ToorChatMessage(message, user)
-		self.device.RFxmit(msg)
+		self.device.RFxmit(msg.to_string())
+		print msg.to_string()
 
 	@classmethod
 	def get_packet_start(cls):
@@ -31,6 +32,9 @@ class ToorChatMessage():
 			self.user = "\x00"*32
 		self.data = message
 		self.end = ToorChatProtocol.get_packet_end()
+
+	def get_random_xid(self):
+		return "44444444"
 
 	def __str__(self):
 		return self.start + self.xid + self.user + self.data + self.end
