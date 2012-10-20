@@ -16,8 +16,8 @@ def main():
 	protocol = ToorChatProtocol(badge)
 	while True:
 		try:
-			msg, timestamp =  badge.RFrecv()
-			print msg
+			print badge.RFrecv()
+			# print msg
 		except ChipconUsbTimeoutException:
 			pass
 	

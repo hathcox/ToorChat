@@ -18,7 +18,7 @@ def main():
 		try:
 			# msg, timestamp =  badge.RFrecv()
 			# print "enter a message"
-			send = raw_input("Enter a message")
+			send = raw_input("Enter a message\n")
 			protocol.send_message(send)
 		except ChipconUsbTimeoutException:
 			pass

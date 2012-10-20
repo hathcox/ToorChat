@@ -10,6 +10,7 @@ class ToorChatProtocol():
 		''' This is used to send a simple message over the toorchat protocol '''
 		msg = ToorChatMessage(message, user)
 		self.device.RFxmit(msg.to_string())
+		print msg.to_string()
 
 	@classmethod
 	def get_packet_start(cls):
