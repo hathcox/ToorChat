@@ -37,3 +37,31 @@ class ToorChatMessage():
 
 	def to_string(self):
 		return self.__str__()
+
+class ToorChatParsePacket():
+	''' This is a class for parsing the data of the packet  '''
+
+	def __init__(self):
+	self.start = ToorChatProtocol.get_packet_start
+	self.end = ToorChatProtocol.get_packet_end
+
+	def check_packet_start(self, message):
+		if message.start == self.start
+			return True
+		else 
+			return False
+
+	def check_packet_end(self, message):
+		if message.end == self.end
+			return True
+		else 
+			return False
+
+	def get_xid(cls):
+		return self.xid
+
+	def get_user(cls):
+		return self.user
+
+	def get_message(cls):
+		return self.message
