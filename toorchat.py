@@ -97,7 +97,7 @@ class Visualizer():
 			self.last_message_index = 0
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
-				self.screen.addstr(0, 1, "[S] Message [U] Username [C] Channel [F] Frequency [W] Load Webpage")
+				self.screen.addstr(0, 1, "[ENTER] Message [U] Username [C] Channel [F] Frequency [W] Load Webpage")
 				self.__add_message_to_screen__()
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
