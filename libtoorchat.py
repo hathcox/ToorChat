@@ -12,6 +12,19 @@ class ToorChatProtocol():
 		self.device.RFxmit(msg.to_string())
 		print msg.to_string()
 
+	def parse_message(self, raw_message):
+		message = ToorChatMessage()
+		start_index = raw_message.find(ToorChatProtocol.get_packet_start())
+		end_index = raw_message.find(ToorChatProtocol.get_packet_end())
+		if start_index == -1 or end_index == -1:
+			return None
+		message.start = raw_message[start_index:start_index + 4]
+		message.xid = raw_message[start_index + 4: start_index + 12]
+		message.user = raw_message[start_index + 12: start_index + 44]
+		message.data = raw_message[start_index + 44: end_index - 4]
+		message.end = raw_message[end_index - 4: end_index]
+		return message
+
 	@classmethod
 	def get_packet_start(cls):
 		return "\xFF\xDE\xAD\xFF"
@@ -41,31 +54,3 @@ class ToorChatMessage():
 
 	def to_string(self):
 		return self.__str__()
-
-class ToorChatParsePacket():
-	''' This is a class for parsing the data of the packet  '''
-
-	def __init__(self):
-	self.start = ToorChatProtocol.get_packet_start
-	self.end = ToorChatProtocol.get_packet_end
-
-	def check_packet_start(self, message):
-		if message.start == self.start
-			return True
-		else 
-			return False
-
-	def check_packet_end(self, message):
-		if message.end == self.end
-			return True
-		else 
-			return False
-
-	def get_xid(cls):
-		return self.xid
-
-	def get_user(cls):
-		return self.user
-
-	def get_message(cls):
-		return self.message
