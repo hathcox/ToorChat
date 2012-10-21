@@ -35,7 +35,7 @@ def thread_run(visual):
 				if toor_message.type == ToorChatProtocol.get_web_response_type():
 					# lets see if its the response were looking for
 					if toor_message.xid == visual.request_xid:
-						index = find_message_in_website(toor_message, visual)
+						find_message_in_website(toor_message, visual)
 					if len(visual.website_buffer) == toor_message.last:
 						#sort messages
 						#Render website
@@ -115,8 +115,8 @@ class Visualizer():
 				if entry == ord('w'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					request = self.protocol.send_web_request(user_input)
 					self.request_xid = request.xid
+					request = self.protocol.send_web_request(user_input)
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 

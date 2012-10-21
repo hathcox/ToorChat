@@ -127,7 +127,6 @@ class ToorMessage():
 			self.xid = self.get_random_xid()
 		else:
 			self.xid = xid
-
 		self.type = protocol_type
 		self.index = index
 		self.last = last
