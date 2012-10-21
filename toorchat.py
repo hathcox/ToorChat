@@ -58,7 +58,7 @@ class Visualizer():
 				self.__add_message_to_screen__()
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
-					self.__draw_frame__()
+					self.__draw_frame__(False)
 				if entry == ord('s'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
@@ -86,9 +86,11 @@ class Visualizer():
 			self.message_queue.pop()
 			if self.last_message_index > self.screen_max_y-5:
 				self.last_message_index = 0
+				self.__draw_frame__()
 
-	def __draw_frame__(self):
-		self.screen.clear()
+	def __draw_frame__(self, clear = True):
+		if clear:
+			self.screen.clear()
 		self.screen.border(0)
 		self.screen.addstr(2,1,"_"*(self.screen_max_x-2))
 
