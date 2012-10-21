@@ -18,7 +18,13 @@ def thread_run(visual):
 			msg, timestamp = visual.badge.RFrecv()
 			toor_message = ToorChatProtocol.parse_message(msg)
 			if toor_message != None:
-				visual.message_queue.append(toor_message)
+				if toor_message.type == ToorChatProtocol.get_chat_type():
+					visual.message_queue.append(toor_message)
+				if toor_message.type == ToorChatProtocol.get_web_request_type():
+					#If we are registered as a server, lets typ to make that request
+					if visual.server:
+						ToorChatProtocol.get_web_messages(toor_message.data, visual)
+
 		except ChipconUsbTimeoutException:
 			pass
 
@@ -26,8 +32,6 @@ class Visualizer():
 
 	def __init__(self):
 		self.screen = curses.initscr()
-		# curses.noecho()
-		# curses.cbreak()
 		self.screen.nodelay(1)
 		self.badge = RfCat(idx=0)
 		self.badge.setModeRX()
@@ -38,6 +42,10 @@ class Visualizer():
 		self.frequency = None
 		#This when set to True will kill the thread
 		self.exit = False
+		self.server = False
+
+	def set_server(self):
+		self.server = True
 
 	def start(self):
 		self.__start_recv_thread__()
@@ -56,7 +64,7 @@ class Visualizer():
 			self.last_message_index = 0
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
-				self.screen.addstr(0, 1, "[S] Send Message [U] Set User Name [C] Set Channel [F] Set Frequency")
+				self.screen.addstr(0, 1, "[S] Send Message [U] Set User Name [C] Set Channel [F] Set Frequency [W] Load Webpage")
 				self.__add_message_to_screen__()
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
@@ -64,7 +72,7 @@ class Visualizer():
 				if entry == ord('s'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					old_message = self.protocol.send_message(user_input, self.user)
+					old_message = self.protocol.send_chat_message(user_input, self.user)
 					self.message_queue.append(old_message)
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
@@ -84,6 +92,10 @@ class Visualizer():
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
 					self.frequency = self.protocol.change_frequency(user_input)
+				if entry == ord('w'):
+					self.screen.nodelay(0)
+					user_input = self.screen.getstr(1, 1, 60)
+					self.protocol.send_web_request(user_input)
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 
@@ -113,4 +125,9 @@ class Visualizer():
 
 if __name__ == '__main__':
 	visual = Visualizer()
+	if len(sys.argv) > 1:
+		if sys.argv[1] == "-s":
+			visual.set_server()
 	visual.start()
+
+	
