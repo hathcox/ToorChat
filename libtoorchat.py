@@ -21,7 +21,7 @@ def get_web_site(visual, site):
 		result = connection.getresponse().read()
 		result_list = string_into_even_peices(result, 200)
 		site_xid = os.urandom(8)
-		length = "%0*d" % (2, len(result_list))
+		length = "%0*d" % (4, len(result_list))
 		for index, item in enumerate(result_list):
 			msg = ToorMessage(item, None, ToorChatProtocol.get_web_response_type(), site_xid, str(index), length)
 			visual.protocol.send_message(msg)
