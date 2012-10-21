@@ -7,6 +7,7 @@ import atexit
 from libtoorchat import *
 from os import system
 import curses
+import webbrowser
 import time
 from threading import Thread
 
@@ -36,12 +37,19 @@ def thread_run(visual):
 				if toor_message.type == ToorChatProtocol.get_web_response_type():
 					# lets see if its the response were looking for
 					if toor_message.xid == visual.request_xid:
-						print "here!"
 						find_message_in_website(toor_message, visual)
-					if len(visual.website_buffer) == toor_message.last:
+					if len(visual.website_buffer) == int(toor_message.last)+1:
 						#sort messages
+						newlist = sorted(visual.website_buffer, key=lambda x: int(x.index), reverse=False)
+						os.remove('temp.html')
+						temp_file = open('temp.html', 'w')
+						total = ""
+						for item in newlist:
+							total += item.data
+						temp_file.write(total)
+						temp_file.close()
 						#Render website
-						print "Winner winner chicken dinners!!"
+						webbrowser.get('firefox').open_new('temp.html')
 
 		except ChipconUsbTimeoutException:
 			pass
