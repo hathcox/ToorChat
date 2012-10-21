@@ -57,7 +57,7 @@ class ToorChatProtocol():
 		if isinstance(frequency, int):
 			self.device.setFreq(int(frequency))
 
-	def send_web_request(self, site = "", xid):
+	def send_web_request(self, site = "", xid = None):
 		'''This is used to attempt to get anyone who is registered as a server to load a website on your behalf '''
 		if site != "":
 			request = ToorMessage(site, None, ToorChatProtocol.get_web_request_type(), xid)
