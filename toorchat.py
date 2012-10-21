@@ -64,6 +64,7 @@ class Visualizer():
 	def __init__(self):
 		self.screen = curses.initscr()
 		self.screen.nodelay(1)
+		self.screen.scrollok(1)
 		self.badge = RfCat(idx=0)
 		self.badge.setModeRX()
 		self.protocol = ToorChatProtocol(self.badge)
@@ -95,6 +96,7 @@ class Visualizer():
 			self.__draw_frame__()
 			self.screen.refresh()
 			self.last_message_index = 0
+			self.screen.setscrreg(3, self.screen_max_y - 2)
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
 				self.screen.addstr(0, 1, "[ENTER] Message [U] Username [C] Channel [F] Frequency [W] Load Webpage")
@@ -102,7 +104,11 @@ class Visualizer():
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
 					self.__draw_frame__(False)
+<<<<<<< Updated upstream
 				if entry == 10:
+=======
+				if entry == ord('\n'):
+>>>>>>> Stashed changes
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
 					old_message = self.protocol.send_chat_message(user_input, self.user)
@@ -148,9 +154,10 @@ class Visualizer():
 			self.last_message_index +=1
 			self.message_queue.pop()
 			if self.last_message_index > self.screen_max_y-5:
-				self.last_message_index = 0
-				self.__draw_frame__()
-
+				self.screen.scroll()
+				self.screen.border(0)
+				self.last_message_index -= 1
+				
 	def __draw_frame__(self, clear = True):
 		if clear:
 			self.screen.clear()
