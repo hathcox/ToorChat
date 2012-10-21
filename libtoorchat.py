@@ -41,6 +41,17 @@ class ToorChatProtocol():
 		self.device.RFxmit(msg.to_string())
 		return msg
 
+	def change_channel(self, channel):
+		''' This is used to change the channel that the user operates in '''
+		if isinstance(channel, int):
+			self.device.setChannel(int(channel))
+
+
+	def change_frequency(self, frequency):
+		''' This is used to change the frequency that the user operates in '''
+		if isinstance(frequency, int):
+			self.device.setFreq(int(frequency))
+
 	def send_web_request(self, site = ""):
 		'''This is used to attempt to get anyone who is registered as a server to load a website on your behalf '''
 		if site != "":
@@ -56,10 +67,12 @@ class ToorChatProtocol():
 		if start_index == -1 or end_index == -1:
 			return None
 		message.start = raw_message[start_index:start_index + 4]
-		message.type = raw_message[start_index + 4: start_index + 5]
-		message.xid = raw_message[start_index + 5: start_index + 13]
-		message.user = raw_message[start_index + 13: start_index + 22]
-		message.data = raw_message[start_index + 22: end_index]
+		message.xid = raw_message[start_index + 4: start_index + 12]
+		message.type = raw_message[start_index + 12: start_index + 14]
+		message.index = raw_message[start_index + 14: start_index + 16]
+		message.last = raw_message[start_index + 16: start_index + 18]
+		message.user = raw_message[start_index + 18: start_index + 26]
+		message.data = raw_message[start_index + 26: end_index]
 		message.end = raw_message[end_index: end_index+4]
 		return message
 
@@ -94,14 +107,14 @@ class ToorMessage():
 
 	''' This is confusing as shit so here is a diagram to attempt to help us all out '''
 	''' ___________________________________________________________________________  '''
-	'''| Start | XID | Type | Index | Last |            Data                | End |  '''
-	'''|___4___|__8__|__2___|___1___|__1___|__________100-200_______________|__4__|  '''
+	'''| Start | XID | Type | Index | Last | User |          Data            | End |  '''
+	'''|___4___|__8__|__2___|___2___|__2___|__8___|_________100-200__________|__4__|  '''
 
 	''' The numbers represent the number of byte in a given message '''
 	''' Note: The more data bytes we use, the harder it is to catch over the air '''
 
 
-	def __init__(self, message = "", user = None, protocol_type=ToorChatProtocol.get_chat_type(), xid=None, index="0", last="0"):
+	def __init__(self, message = "", user = None, protocol_type=ToorChatProtocol.get_chat_type(), xid=None, index="00", last="00"):
 		self.raw = None
 		self.start = ToorChatProtocol.get_packet_start()
 		if xid == None:
@@ -117,7 +130,7 @@ class ToorMessage():
 			if len(self.user) < USER_NAME_SIZE:
 				self.user = self.user + " "* (USER_NAME_SIZE-len(self.user))
 		else:
-			self.user = "anonymous"
+			self.user = "--NONE--"
 		self.data = message
 		self.end = ToorChatProtocol.get_packet_end()
 
@@ -125,7 +138,7 @@ class ToorMessage():
 		return os.urandom(8)
 
 	def __str__(self):
-		return self.start +self.type+ self.xid + self.user + self.data + self.end
+		return self.start + self.xid + self.type + self.index + self.last + self.user + self.data + self.end
 
 	def to_string(self):
 		return self.__str__()

@@ -39,6 +39,8 @@ class Visualizer():
 		self.message_queue = []
 		self.website_buffer = []
 		self.user = None
+		self.channel = None
+		self.frequency = None
 		#This when set to True will kill the thread
 		self.exit = False
 		self.server = False
@@ -63,7 +65,7 @@ class Visualizer():
 			self.last_message_index = 0
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
-				self.screen.addstr(0, 1, "[S] Send Message [U] Set User Name [W] Load Website")
+				self.screen.addstr(0, 1, "[S] Message [U] Username [C] Channel [F] Frequency [W] Load Webpage")
 				self.__add_message_to_screen__()
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
@@ -79,6 +81,18 @@ class Visualizer():
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
 					self.user = user_input[:USER_NAME_SIZE]
+					self.screen.nodelay(1)
+					self.screen.addstr(1,1," "*(self.screen_max_x-3))
+				if entry == ord('c'):
+					self.screen.nodelay(0)
+					user_input = self.screen.getstr(1, 1, 60)
+					self.channel = self.protocol.change_channel(user_input)
+					self.screen.nodelay(1)
+					self.screen.addstr(1,1," "*(self.screen_max_x-3))
+				if entry == ord('f'):
+					self.screen.nodelay(0)
+					user_input = self.screen.getstr(1, 1, 60)
+					self.frequency = self.protocol.change_frequency(user_input)
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 				if entry == ord('w'):
