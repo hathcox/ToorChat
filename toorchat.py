@@ -41,7 +41,11 @@ def thread_run(visual):
 					if len(visual.website_buffer) == int(toor_message.last)+1:
 						#sort messages
 						newlist = sorted(visual.website_buffer, key=lambda x: int(x.index), reverse=False)
-						os.remove('temp.html')
+						try:
+							os.remove('temp.html')
+						except Exception:
+							#There is a chance this file might now exist
+							pass
 						temp_file = open('temp.html', 'w')
 						total = ""
 						for item in newlist:
