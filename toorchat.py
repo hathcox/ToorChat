@@ -16,7 +16,7 @@ def thread_run(visual):
 	while not visual.exit:
 		try:
 			msg, timestamp = visual.badge.RFrecv()
-			toor_message = ToorChatProtocol.parse_chat_message(msg)
+			toor_message = ToorChatProtocol.parse_message(msg)
 			if toor_message != None:
 				if toor_message.type == ToorChatProtocol.get_chat_type():
 					visual.message_queue.append(toor_message)
