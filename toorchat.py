@@ -31,7 +31,7 @@ def thread_run(visual):
 				if toor_message.type == ToorChatProtocol.get_web_request_type():
 					#If we are registered as a server, lets type to make that request
 					if visual.server:
-						visual.request_xid = toor_message.request_xid
+						visual.request_xid = toor_message.xid
 						ToorChatProtocol.get_web_messages(toor_message.data, visual)
 				if toor_message.type == ToorChatProtocol.get_web_response_type():
 					# lets see if its the response were looking for
