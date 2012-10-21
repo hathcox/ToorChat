@@ -14,6 +14,21 @@ class ToorChatProtocol():
 		self.device.RFxmit(msg.to_string())
 		return msg
 
+	def change_channel(self, channel):
+		''' This is used to change the channel that the user operates in '''
+		self.device.setChannel(int(channel))
+		if channel != int
+			return None
+		else
+		return channel
+
+	def change_frequency(self, frequency):
+		''' This is used to change the frequency that the user operates in '''
+		self.device.setFreq(int(change_frequency))
+		if frequency != int
+			return None
+		else
+		return frequency
 	@classmethod
 	def parse_message(cls, raw_message):
 		message = ToorChatMessage()
