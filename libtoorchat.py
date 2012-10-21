@@ -2,7 +2,7 @@ import os
 import httplib
 from threading import Thread
 
-USER_NAME_SIZE = 9
+USER_NAME_SIZE = 8
 
 def string_into_even_peices(string, size):
 	peices = len(string)/size
