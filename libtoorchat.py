@@ -31,19 +31,15 @@ class ToorChatProtocol():
 
 	def change_channel(self, channel):
 		''' This is used to change the channel that the user operates in '''
-		self.device.setChannel(int(channel))
-		if channel != int
-			return None
-		else
-		return channel
+		if isinstance(channel, int):
+			self.device.setChannel(int(channel))
+
 
 	def change_frequency(self, frequency):
 		''' This is used to change the frequency that the user operates in '''
-		self.device.setFreq(int(change_frequency))
-		if frequency != int
-			return None
-		else
-		return frequency
+		if isinstance(frequency, int):
+			self.device.setFreq(int(frequency))
+
 	def send_web_request(self, site = ""):
 		'''This is used to attempt to get anyone who is registered as a server to load a website on your behalf '''
 		if site != "":
