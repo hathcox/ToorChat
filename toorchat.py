@@ -52,6 +52,7 @@ def thread_run(visual):
 							total += item.data
 						temp_file.write(total)
 						temp_file.close()
+						visual.website_buffer = []
 						#Render website
 						webbrowser.get('firefox').open_new('temp.html')
 
@@ -130,8 +131,8 @@ class Visualizer():
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
 					self.request_xid = ToorMessage.get_random_xid()
+					self.website_buffer = []
 					request = self.protocol.send_web_request(user_input, self.request_xid)
-					print self.request_xid
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 
