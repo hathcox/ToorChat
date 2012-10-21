@@ -45,6 +45,8 @@ class ToorChatMessage():
 		self.xid = self.get_random_xid()
 		if user != None:
 			self.user = user
+			if len(self.user) < USER_NAME_SIZE:
+				self.user = self.user + " "* (USER_NAME_SIZE-len(self.user))
 		else:
 			self.user = "anonymous"
 		self.data = message
