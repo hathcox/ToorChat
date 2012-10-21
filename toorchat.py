@@ -33,6 +33,7 @@ class Visualizer():
 		self.badge.setModeRX()
 		self.protocol = ToorChatProtocol(self.badge)
 		self.message_queue = []
+		self.user = None
 		#This when set to True will kill the thread
 		self.exit = False
 
@@ -53,10 +54,11 @@ class Visualizer():
 			last_message_index = 0
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
-				self.screen.addstr(0, 1, "[S] Send Message ")
+				self.screen.addstr(0, 1, "[S] Send Message [U] Set User Name")
 				if len(self.message_queue) > 0:
-					message = time.ctime()+":"+ str(self.message_queue[len(self.message_queue)-1].data)
-					self.screen.addstr(last_message_index+3,1, message + " "*(self.screen_max_x-(2+len(message))))
+					message = self.message_queue[len(self.message_queue)-1]
+					message_string = str(message.user)+":"+ str(message.data)
+					self.screen.addstr(last_message_index+3,1, message_string + " "*(self.screen_max_x-(2+len(message_string))))
 					print self.screen_max_x
 					last_message_index +=1
 					self.message_queue.pop()
@@ -68,10 +70,15 @@ class Visualizer():
 				if entry == ord('s'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					self.protocol.send_message(user_input)
+					self.protocol.send_message(user_input, self.user)
 					self.screen.nodelay(1)
-					self.__draw_frame__()
-					self.screen.refresh()
+					self.screen.addstr(1,1," "*(self.screen_max_x-3))
+				if entry == ord('u'):
+					self.screen.nodelay(0)
+					user_input = self.screen.getstr(1, 1, 60)
+					self.user = user_input
+					self.screen.nodelay(1)
+					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 
 		except KeyboardInterrupt:
 			self.exit = True
