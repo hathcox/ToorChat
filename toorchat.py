@@ -10,6 +10,14 @@ import curses
 import time
 from threading import Thread
 
+def find_message_in_website(message, visual):
+	found = False
+	for item in visual.website_buffer:
+		if message.index == item.index:
+			found = True
+	if not found:
+		visual.website_buffer.append(message)
+
 def thread_run(visual):
 	''' This is our function for the thread '''
 	#Thread should run until exit
@@ -24,6 +32,14 @@ def thread_run(visual):
 					#If we are registered as a server, lets type to make that request
 					if visual.server:
 						ToorChatProtocol.get_web_messages(toor_message.data, visual)
+				if toor_message.type == ToorChatProtocol.get_web_response_type():
+					# lets see if its the response were looking for
+					if toor_message.xid == visual.request_xid:
+						index = find_message_in_website(toor_message, visual)
+					if len(website_buffer) == toor_message.last:
+						#sort messages
+						#Render website
+						print "Winner winner chicken dinners!!"
 
 		except ChipconUsbTimeoutException:
 			pass
@@ -41,6 +57,7 @@ class Visualizer():
 		self.user = None
 		self.channel = None
 		self.frequency = None
+		self.request_xid = None
 		#This when set to True will kill the thread
 		self.exit = False
 		self.server = False
@@ -98,7 +115,8 @@ class Visualizer():
 				if entry == ord('w'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					self.protocol.send_web_request(user_input)
+					request = self.protocol.send_web_request(user_input)
+					self.request_xid = request.xid
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 

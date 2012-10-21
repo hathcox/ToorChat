@@ -20,14 +20,11 @@ def get_web_site(visual, site):
 		connection.request("GET", "/")
 		result = connection.getresponse().read()
 		result_list = string_into_even_peices(result, 200)
-		site_xid = os.urandom(8)
-		length = "%0*d" % (4, len(result_list))
-
+		length = "%0*d" % (4, len(result_list)-1)
 		for index, item in enumerate(result_list):
 			index = "%0*d" % (4, index)
-			msg = ToorMessage(item, None, ToorChatProtocol.get_web_response_type(), site_xid, index, length)
+			msg = ToorMessage(item, None, ToorChatProtocol.get_web_response_type(), visual.request_xid, index, length)
 			visual.protocol.send_message(msg)
-			# visual.message_queue.append(msg)
 	except Exception as e:
 		print e
 
@@ -65,6 +62,7 @@ class ToorChatProtocol():
 		if site != "":
 			request = ToorMessage(site, None, ToorChatProtocol.get_web_request_type())
 			self.device.RFxmit(request.to_string())
+			return request
 
 	@classmethod
 	def parse_message(cls, raw_message):
