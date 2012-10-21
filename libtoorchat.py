@@ -1,4 +1,6 @@
 
+USER_NAME_SIZE = 9
+
 class ToorChatProtocol():
 	''' This is a class to allow for easy of use with anything to do with messaging '''
 	def __init__(self, device):
@@ -21,8 +23,8 @@ class ToorChatProtocol():
 			return None
 		message.start = raw_message[start_index:start_index + 4]
 		message.xid = raw_message[start_index + 4: start_index + 12]
-		message.user = raw_message[start_index + 12: start_index + 44]
-		message.data = raw_message[start_index + 44: end_index]
+		message.user = raw_message[start_index + 12: start_index + 21]
+		message.data = raw_message[start_index + 21: end_index]
 		message.end = raw_message[end_index: end_index+4]
 		return message
 
@@ -44,7 +46,7 @@ class ToorChatMessage():
 		if user != None:
 			self.user = user
 		else:
-			self.user = "\xAA"*32
+			self.user = "anonymous"
 		self.data = message
 		self.end = ToorChatProtocol.get_packet_end()
 

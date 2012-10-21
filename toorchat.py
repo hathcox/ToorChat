@@ -76,7 +76,7 @@ class Visualizer():
 				if entry == ord('u'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					self.user = user_input
+					self.user = user_input[:USER_NAME_SIZE]
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 
