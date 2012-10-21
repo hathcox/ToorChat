@@ -4,6 +4,14 @@ from threading import Thread
 
 USER_NAME_SIZE = 9
 
+def string_into_even_peices(string, size):
+	peices = len(string)/size
+	result = []
+	if len(string) % size:
+		peices +=1
+	for index in range(peices):
+		result.append(string[index*size:(index*size)+size])
+	return result
 
 def get_web_site(visual, site):
 	''' This is a threaded message to query a website and create message to pass back '''
@@ -11,9 +19,13 @@ def get_web_site(visual, site):
 		connection = httplib.HTTPConnection(site)
 		connection.request("GET", "/")
 		result = connection.getresponse().read()
-		visual.message_quque.append(result)
-	except Exception:
-		pass 
+		result_list = string_into_even_peices(result, 100)
+		site_xid = os.urandom(8)
+		for index, item in enumerate(result_list):
+			msg = ToorMessage(item, None, ToorChatProtocol.get_web_response_type(), site_xid, str(index), )
+			# visual.message_queue.append(msg)
+	except Exception as e:
+		print e
 
 
 class ToorChatProtocol():
@@ -67,20 +79,39 @@ class ToorChatProtocol():
 
 	@classmethod
 	def get_chat_type(cls):
-		return "1"
+		return "01"
 
 	@classmethod
 	def get_web_request_type(cls):
-		return "2"
+		return "02"
+
+	@classmethod
+	def get_web_response_type(cls):
+		return "03"
 
 class ToorMessage():
 	''' This is a simple Message object wrapper to make things cleaner '''
 
-	def __init__(self, message = "", user = None, type=ToorChatProtocol.get_chat_type()):
+	''' This is confusing as shit so here is a diagram to attempt to help us all out '''
+	''' ___________________________________________________________________________  '''
+	'''| Start | XID | Type | Index | Last |            Data                | End |  '''
+	'''|___4___|__8__|__2___|___1___|__1___|__________100-200_______________|__4__|  '''
+
+	''' The numbers represent the number of byte in a given message '''
+	''' Note: The more data bytes we use, the harder it is to catch over the air '''
+
+
+	def __init__(self, message = "", user = None, protocol_type=ToorChatProtocol.get_chat_type(), xid=None, index="0", last="0"):
 		self.raw = None
 		self.start = ToorChatProtocol.get_packet_start()
-		self.xid = self.get_random_xid()
-		self.type = type
+		if xid == None:
+			self.xid = self.get_random_xid()
+		else:
+			self.xid = xid
+
+		self.type = protocol_type
+		self.index = index
+		self.last = last
 		if user != None:
 			self.user = user
 			if len(self.user) < USER_NAME_SIZE:

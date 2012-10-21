@@ -37,6 +37,7 @@ class Visualizer():
 		self.badge.setModeRX()
 		self.protocol = ToorChatProtocol(self.badge)
 		self.message_queue = []
+		self.website_buffer = []
 		self.user = None
 		#This when set to True will kill the thread
 		self.exit = False
@@ -115,7 +116,6 @@ if __name__ == '__main__':
 	visual = Visualizer()
 	if len(sys.argv) > 1:
 		if sys.argv[1] == "-s":
+			print "SET server"
 			visual.set_server()
 	visual.start()
-
-	
