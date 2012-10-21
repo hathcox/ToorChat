@@ -19,10 +19,12 @@ def get_web_site(visual, site):
 		connection = httplib.HTTPConnection(site)
 		connection.request("GET", "/")
 		result = connection.getresponse().read()
-		result_list = string_into_even_peices(result, 100)
+		result_list = string_into_even_peices(result, 200)
 		site_xid = os.urandom(8)
+		length = "%0*d" % (2, len(result_list))
 		for index, item in enumerate(result_list):
-			msg = ToorMessage(item, None, ToorChatProtocol.get_web_response_type(), site_xid, str(index), )
+			msg = ToorMessage(item, None, ToorChatProtocol.get_web_response_type(), site_xid, str(index), length)
+			visual.protocol.send_message(msg)
 			# visual.message_queue.append(msg)
 	except Exception as e:
 		print e
@@ -40,6 +42,10 @@ class ToorChatProtocol():
 		msg = ToorMessage(message, user)
 		self.device.RFxmit(msg.to_string())
 		return msg
+
+	def send_message(self, message):
+		''' Send off a ToorMessage Object '''
+		self.device.RFxmit(message.to_string())
 
 	def change_channel(self, channel):
 		''' This is used to change the channel that the user operates in '''
@@ -69,10 +75,10 @@ class ToorChatProtocol():
 		message.start = raw_message[start_index:start_index + 4]
 		message.xid = raw_message[start_index + 4: start_index + 12]
 		message.type = raw_message[start_index + 12: start_index + 14]
-		message.index = raw_message[start_index + 14: start_index + 16]
-		message.last = raw_message[start_index + 16: start_index + 18]
-		message.user = raw_message[start_index + 18: start_index + 26]
-		message.data = raw_message[start_index + 26: end_index]
+		message.index = raw_message[start_index + 14: start_index + 18]
+		message.last = raw_message[start_index + 18: start_index + 22]
+		message.user = raw_message[start_index + 22: start_index + 30]
+		message.data = raw_message[start_index + 30: end_index]
 		message.end = raw_message[end_index: end_index+4]
 		return message
 
@@ -108,7 +114,7 @@ class ToorMessage():
 	''' This is confusing as shit so here is a diagram to attempt to help us all out '''
 	''' ___________________________________________________________________________  '''
 	'''| Start | XID | Type | Index | Last | User |          Data            | End |  '''
-	'''|___4___|__8__|__2___|___2___|__2___|__8___|_________100-200__________|__4__|  '''
+	'''|___4___|__8__|__2___|___4___|__4___|__8___|_________100-200__________|__4__|  '''
 
 	''' The numbers represent the number of byte in a given message '''
 	''' Note: The more data bytes we use, the harder it is to catch over the air '''
@@ -138,7 +144,7 @@ class ToorMessage():
 		return os.urandom(8)
 
 	def __str__(self):
-		return self.start + self.xid + self.type + self.index + self.last + self.user + self.data + self.end
+		return self.start + self.xid + self.type + str(self.index) + str(self.last) + self.user + self.data + self.end
 
 	def to_string(self):
 		return self.__str__()

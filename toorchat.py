@@ -21,7 +21,7 @@ def thread_run(visual):
 				if toor_message.type == ToorChatProtocol.get_chat_type():
 					visual.message_queue.append(toor_message)
 				if toor_message.type == ToorChatProtocol.get_web_request_type():
-					#If we are registered as a server, lets typ to make that request
+					#If we are registered as a server, lets type to make that request
 					if visual.server:
 						ToorChatProtocol.get_web_messages(toor_message.data, visual)
 
