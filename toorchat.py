@@ -57,7 +57,8 @@ class Visualizer():
 					self.__draw_frame__()
 				if entry == ord('s'):
 					self.screen.nodelay(0)
-					input = self.screen.getstr(1, 1, 60)
+					user_input = self.screen.getstr(1, 1, 60)
+					self.protocol.send_message(user_input)
 					self.screen.nodelay(1)
 					self.__draw_frame__()
 					self.screen.refresh()
