@@ -143,7 +143,7 @@ class Visualizer():
 	def __add_message_to_screen__(self):
 		if len(self.message_queue) > 0:
 			message = self.message_queue[len(self.message_queue)-1]
-			message_string = str(message.user)+":"+ str(message.data)
+			message_string = str(message.user)+": "+ str(message.data)
 			self.screen.addstr(self.last_message_index+3,1, message_string + " "*(self.screen_max_x-(2+len(message_string))))
 			self.last_message_index +=1
 			self.message_queue.pop()
