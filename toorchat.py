@@ -50,15 +50,18 @@ class Visualizer():
 			self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
 			self.__draw_frame__()
 			self.screen.refresh()
+			last_message_index = 0
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
 				self.screen.addstr(0, 1, "[S] Send Message ")
 				if len(self.message_queue) > 0:
-					self.screen.clear()
-					self.__draw_frame__()
-					self.screen.refresh()
-					self.screen.addstr(3,1,"Last Message:" + str(self.message_queue[len(self.message_queue)-1].data))
+					message = time.ctime()+":"+ str(self.message_queue[len(self.message_queue)-1].data)
+					self.screen.addstr(last_message_index+3,1, message + " "*(self.screen_max_x-(2+len(message))))
+					print self.screen_max_x
+					last_message_index +=1
 					self.message_queue.pop()
+					if last_message_index > self.screen_max_y-5:
+						last_message_index = 0
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
 					self.__draw_frame__()
