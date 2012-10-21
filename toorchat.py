@@ -102,7 +102,7 @@ class Visualizer():
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
 					self.__draw_frame__(False)
-				if entry == ord('s'):
+				if entry == 10:
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
 					old_message = self.protocol.send_chat_message(user_input, self.user)
