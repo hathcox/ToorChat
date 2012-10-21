@@ -12,8 +12,10 @@ class ToorChatProtocol():
 		self.device.RFxmit(msg.to_string())
 		print msg.to_string()
 
-	def parse_message(self, raw_message):
+	@classmethod
+	def parse_message(cls, raw_message):
 		message = ToorChatMessage()
+		message.raw = raw_message
 		start_index = raw_message.find(ToorChatProtocol.get_packet_start())
 		end_index = raw_message.find(ToorChatProtocol.get_packet_end())
 		if start_index == -1 or end_index == -1:
@@ -21,8 +23,8 @@ class ToorChatProtocol():
 		message.start = raw_message[start_index:start_index + 4]
 		message.xid = raw_message[start_index + 4: start_index + 12]
 		message.user = raw_message[start_index + 12: start_index + 44]
-		message.data = raw_message[start_index + 44: end_index - 4]
-		message.end = raw_message[end_index - 4: end_index]
+		message.data = raw_message[start_index + 44: end_index]
+		message.end = raw_message[end_index: end_index+4]
 		return message
 
 	@classmethod
@@ -37,12 +39,13 @@ class ToorChatMessage():
 	''' This is a simple Message object wrapper to make things cleaner '''
 
 	def __init__(self, message = "", user = None):
+		self.raw = None
 		self.start = ToorChatProtocol.get_packet_start()
 		self.xid = self.get_random_xid()
 		if user != None:
 			self.user = user
 		else:
-			self.user = "\x00"*32
+			self.user = "\xAA"*32
 		self.data = message
 		self.end = ToorChatProtocol.get_packet_end()
 

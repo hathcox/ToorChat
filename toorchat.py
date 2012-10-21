@@ -16,7 +16,9 @@ def thread_run(visual):
 	while not visual.exit:
 		try:
 			msg, timestamp = visual.badge.RFrecv()
-			visual.message_queue.append(msg)
+			toor_message = ToorChatProtocol.parse_message(msg)
+			if toor_message != None:
+				visual.message_queue.append(toor_message)
 		except ChipconUsbTimeoutException:
 			pass
 
@@ -51,7 +53,12 @@ class Visualizer():
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
 				self.screen.addstr(0, 1, "[S] Send Message ")
-				self.screen.addstr(3,1,"Count:" + str(len(self.message_queue)))
+				if len(self.message_queue) > 0:
+					self.screen.clear()
+					self.__draw_frame__()
+					self.screen.refresh()
+					self.screen.addstr(3,1,"Last Message:" + str(self.message_queue[len(self.message_queue)-1].data))
+					self.message_queue.pop()
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
 					self.__draw_frame__()
