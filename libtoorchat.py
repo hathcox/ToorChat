@@ -57,10 +57,10 @@ class ToorChatProtocol():
 		if isinstance(frequency, int):
 			self.device.setFreq(int(frequency))
 
-	def send_web_request(self, site = ""):
+	def send_web_request(self, site = "", xid):
 		'''This is used to attempt to get anyone who is registered as a server to load a website on your behalf '''
 		if site != "":
-			request = ToorMessage(site, None, ToorChatProtocol.get_web_request_type())
+			request = ToorMessage(site, None, ToorChatProtocol.get_web_request_type(), xid)
 			self.device.RFxmit(request.to_string())
 			return request
 
@@ -120,7 +120,7 @@ class ToorMessage():
 	''' Note: The more data bytes we use, the harder it is to catch over the air '''
 
 
-	def __init__(self, message = "", user = None, protocol_type=ToorChatProtocol.get_chat_type(), xid=None, index="00", last="00"):
+	def __init__(self, message = "", user = None, protocol_type=ToorChatProtocol.get_chat_type(), xid=None, index="0000", last="0000"):
 		self.raw = None
 		self.start = ToorChatProtocol.get_packet_start()
 		if xid == None:
@@ -139,6 +139,7 @@ class ToorMessage():
 		self.data = message
 		self.end = ToorChatProtocol.get_packet_end()
 
+	@classmethod
 	def get_random_xid(self):
 		return os.urandom(8)
 

@@ -115,8 +115,8 @@ class Visualizer():
 				if entry == ord('w'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					self.request_xid = request.xid
-					request = self.protocol.send_web_request(user_input)
+					self.request_xid = ToorMessage.get_random_xid()
+					request = self.protocol.send_web_request(user_input, self.request_xid)
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 
