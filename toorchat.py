@@ -51,26 +51,19 @@ class Visualizer():
 			self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
 			self.__draw_frame__()
 			self.screen.refresh()
-			last_message_index = 0
+			self.last_message_index = 0
 			while True:
 				self.screen_max_y, self.screen_max_x = self.screen.getmaxyx()
 				self.screen.addstr(0, 1, "[S] Send Message [U] Set User Name")
-				if len(self.message_queue) > 0:
-					message = self.message_queue[len(self.message_queue)-1]
-					message_string = str(message.user)+":"+ str(message.data)
-					self.screen.addstr(last_message_index+3,1, message_string + " "*(self.screen_max_x-(2+len(message_string))))
-					print self.screen_max_x
-					last_message_index +=1
-					self.message_queue.pop()
-					if last_message_index > self.screen_max_y-5:
-						last_message_index = 0
+				self.__add_message_to_screen__()
 				entry = self.screen.getch()
 				if entry == curses.KEY_RESIZE:
 					self.__draw_frame__()
 				if entry == ord('s'):
 					self.screen.nodelay(0)
 					user_input = self.screen.getstr(1, 1, 60)
-					self.protocol.send_message(user_input, self.user)
+					old_message = self.protocol.send_message(user_input, self.user)
+					self.message_queue.append(old_message)
 					self.screen.nodelay(1)
 					self.screen.addstr(1,1," "*(self.screen_max_x-3))
 				if entry == ord('u'):
@@ -83,6 +76,16 @@ class Visualizer():
 		except KeyboardInterrupt:
 			self.exit = True
 			self.stop()
+
+	def __add_message_to_screen__(self):
+		if len(self.message_queue) > 0:
+			message = self.message_queue[len(self.message_queue)-1]
+			message_string = str(message.user)+":"+ str(message.data)
+			self.screen.addstr(self.last_message_index+3,1, message_string + " "*(self.screen_max_x-(2+len(message_string))))
+			self.last_message_index +=1
+			self.message_queue.pop()
+			if self.last_message_index > self.screen_max_y-5:
+				self.last_message_index = 0
 
 	def __draw_frame__(self):
 		self.screen.clear()
