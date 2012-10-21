@@ -36,7 +36,7 @@ def thread_run(visual):
 					# lets see if its the response were looking for
 					if toor_message.xid == visual.request_xid:
 						index = find_message_in_website(toor_message, visual)
-					if len(website_buffer) == toor_message.last:
+					if len(visual.website_buffer) == toor_message.last:
 						#sort messages
 						#Render website
 						print "Winner winner chicken dinners!!"
